@@ -5,7 +5,7 @@ Library Go bersama (shared core) untuk seluruh service di ISP-Project
 Tujuannya menyatukan hal-hal lintas service — logging, error, response, dan
 konstanta — supaya setiap service tidak menulis ulang hal yang sama.
 
-- **Module path:** `enim.com/go-core`
+- **Module path:** `github.com/enim-net/enim-core`
 - **Go:** 1.26+
 
 ## Isi Paket
@@ -21,16 +21,16 @@ konstanta — supaya setiap service tidak menulis ulang hal yang sama.
 ## Instalasi
 
 ```bash
-go get enim.com/go-core
+go get github.com/enim-net/enim-core
 ```
 
 Untuk pengembangan lokal (repo belum dipublikasikan), arahkan module ke folder
 lokal lewat `replace` di `go.mod` service:
 
 ```go
-require enim.com/go-core v0.0.0
+require github.com/enim-net/enim-core v0.0.0
 
-replace enim.com/go-core => ../enim-core
+replace github.com/enim-net/enim-core => ../enim-core
 ```
 
 ## Logger
@@ -67,7 +67,7 @@ Tanpa konfigurasi, logger default menulis format teks ke stdout dengan level
 `info`:
 
 ```go
-import "enim.com/go-core/logger"
+import "github.com/enim-net/enim-core/logger"
 
 logger.Info(ctx, "server started", logger.Int("port", 8080))
 logger.Error(ctx, "gagal memproses pembayaran", logger.Err(err))
@@ -83,8 +83,8 @@ import (
     "os"
     "time"
 
-    "enim.com/go-core/logger"
-    "enim.com/go-core/logger/sentry"
+    "github.com/enim-net/enim-core/logger"
+    "github.com/enim-net/enim-core/logger/sentry"
 )
 
 func main() {

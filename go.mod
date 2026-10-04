@@ -1,4 +1,4 @@
-module enim.com/go-core
+module github.com/enim-net/enim-core
 
 go 1.26.4
 

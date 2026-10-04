@@ -3,7 +3,7 @@ import (
 	"errors"
 	"fmt"
 	
-	"enim.com/go-core/dictionary"
+	"github.com/enim-net/enim-core/dictionary"
 )
 
 // P is shorthand for message params.

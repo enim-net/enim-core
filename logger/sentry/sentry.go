@@ -7,7 +7,7 @@ import (
 	
 	sentrygo "github.com/getsentry/sentry-go"
 	
-	"enim.com/go-core/logger"
+	"github.com/enim-net/enim-core/logger"
 )
 
 type Config struct {
