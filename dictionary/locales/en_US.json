@@ -1,0 +1,7 @@
+{
+  "validation": {
+    "required": "{{field}} is required",
+    "min_length": "{{field}} must be at least {{min}} characters",
+    "invalid_email": "{{field}} must be a valid email address"
+  }
+}

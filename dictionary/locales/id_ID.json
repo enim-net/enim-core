@@ -1,0 +1,10 @@
+{
+  "common": {
+
+  },
+  "validation": {
+    "required": "{{field}} wajib diisi",
+    "min_length": "{{field}} minimal {{min}} karakter",
+    "invalid_email": "{{field}} harus berupa email yang valid"
+  }
+}

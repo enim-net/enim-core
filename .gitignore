@@ -1,0 +1,19 @@
+# Binaries
+/bin/
+*.exe
+.junie
+.claude
+tmp
+
+# Go
+*.test
+*.out
+vendor/
+
+# Air live-reload build output
+/tmp/
+build-errors.log
+
+# IDE
+.idea/
+.vscode/
