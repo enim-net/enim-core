@@ -25,7 +25,7 @@ func (l Level) String() string {
 	case LevelError:
 		return "error"
 	default:
-		return fmt.Sprint("level(%d)", l)
+		return fmt.Sprintf("level(%d)", l)
 	}
 }
 
