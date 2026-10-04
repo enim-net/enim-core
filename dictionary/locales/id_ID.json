@@ -1,10 +1,36 @@
 {
-  "common": {
-
-  },
-  "validation": {
-    "required": "{{field}} wajib diisi",
-    "min_length": "{{field}} minimal {{min}} karakter",
-    "invalid_email": "{{field}} harus berupa email yang valid"
-  }
+  "general.success": "Proses berhasil dilakukan.",
+  "general.list.success": "Data berhasil diambil.",
+  "general.object.success": "Data yang Anda minta telah tersedia.",
+  "general.create.success": "Data berhasil dibuat.",
+  "general.create.success.dynamic": "Data {{var}} berhasil dibuat.",
+  "general.create.conflict": "Data gagal dibuat.",
+  "general.create.failure": "Data gagal dibuat.",
+  "general.data.found": "Data berhasil ditemukan.",
+  "general.data.field.duplicate": "{{var}} sudah ada.",
+  "general.data.duplicate": "Data {{var}} yang Anda masukkan sudah ada.",
+  "general.data.empty": "Data {{var}} tidak ditemukan ",
+  "general.data.not.found": "Data tidak ditemukan.",
+  "general.data.not.empty": "Kolom {{var}} tidak boleh kosong.",
+  "general.update.success": "Data berhasil diperbarui.",
+  "general.update.failure": "Data tidak dapat diperbarui. Silakan coba lagi.",
+  "general.delete.success": "Data berhasil dihapus",
+  "general.delete.failure": "Data tidak dapat dihapus. Silakan coba lagi.",
+  "general.validation.failure": "Validasi gagal ",
+  "validate.format.uuid": "harus uuid",
+  "validation.rule.required": "{{field}} wajib diisi",
+  "validation.rule.min_length": "{{field}} minimal {{min}} karakter",
+  "validation.rule.invalid_email": "{{field}} harus berupa email yang valid",
+  "auth.credential.success.login": "Anda telah berhasil masuk. Selamat datang!",
+  "auth.credential.decode.failure": "Gagal mendekode kredensial",
+  "auth.headers.token.notfound": "Token pada header tidak ditemukan",
+  "auth.credential.invalid": "Email atau kata sandi yang Anda masukkan tidak sesuai. Silakan periksa kembali dan coba lagi.",
+  "auth.credential.success.logout": "Anda telah berhasil keluar. Terima kasih telah menggunakan layanan kami.",
+  "session.expired": "Sesi Anda telah berakhir. Silakan masuk kembali untuk melanjutkan.",
+  "session.has.active": "Ada sesi aktif pada perangkat ini. Silakan keluar dari sesi tersebut terlebih dahulu.",
+  "session.has.logout": "Sesi Anda telah berhasil dihentikan.",
+  "session.kill.success": "Sesi berhasil diakhiri.",
+  "session.not.found": "Sesi tidak ditemukan.",
+  "smtp.test.success": "Pengujian email berhasil dikirim.",
+  "smtp.test.failure": "Pengujian email gagal. Silakan periksa kembali konfigurasi SMTP."
 }
