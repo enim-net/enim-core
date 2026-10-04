@@ -18,7 +18,7 @@
 
 set -euo pipefail
 
-BRANCH="${BRANCH:-main}"
+BRANCH="${BRANCH:-development}"
 REMOTE="${REMOTE:-origin}"
 BUMP="${1:-patch}"
 
