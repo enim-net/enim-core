@@ -9,7 +9,7 @@ type Category struct {
 }
 
 var (
-	CategoryGeneral    = Category{"00", "general", http.StatusInternalServerError}
+	CategoryGeneral    = Category{"00", "general", http.StatusOK}
 	CategoryValidation = Category{"01", "validation", http.StatusBadRequest}
 	CategoryAuth       = Category{"02", "authentication", http.StatusUnauthorized}
 	CategoryForbidden  = Category{"03", "authorization", http.StatusForbidden}
@@ -19,4 +19,5 @@ var (
 	CategoryDatabase   = Category{"07", "database", http.StatusInternalServerError}
 	CategoryExternal   = Category{"08", "external_service", http.StatusBadGateway}
 	CategoryRateLimit  = Category{"09", "rate_limit", http.StatusTooManyRequests}
+	CategoryUnhandled  = Category{"90", "unhandled", http.StatusInternalServerError}
 )

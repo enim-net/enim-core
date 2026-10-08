@@ -32,8 +32,8 @@ var (
 	ErrNotFound = defineCore(CategoryNotFound, 0, "error.not_found")
 	
 	// 05 conflict
-	ErrConflict       = defineCore(CategoryConflict, 0, "error.conflict")
-	ErrDupliCategorye = defineCore(CategoryConflict, 1, "error.dupliCategorye")
+	ErrConflict          = defineCore(CategoryConflict, 0, "error.conflict")
+	ErrDuplicateCategory = defineCore(CategoryConflict, 1, "error.dupliCategorye")
 	
 	// 06 business rule
 	ErrBusinessRule = defineCore(CategoryBusiness, 0, "error.business_rule")

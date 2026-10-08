@@ -22,20 +22,21 @@ func (a App) IsDevelopment() bool {
 func (a App) IsRegression() bool {
 	return strings.EqualFold(a.Env, "regression")
 }
+func (a App) IsSandbox() bool { return strings.EqualFold(a.Env, "sandbox") }
 
 // DB is a PostgreSQL connection. Use with `prefix:"DB_"` for DB_HOST, DB_PORT...
 type DB struct {
-	Host     string `env:"HOST" default:"localhost"`
-	Port     int    `env:"PORT" default:"5432"`
-	User     string `env:"USER" default:"postgres"`
-	Password string `env:"PASSWORD" secret:"true"`
-	Name     string `env:"NAME" required:"true"`
-	SSLMode  string `env:"SSLMODE" default:"disable"`
-	TimeZone string `env:"TIMEZONE" default:"Asia/Jakarta"`
+	Host     string `env:"DB_HOST" default:"localhost"`
+	Port     int    `env:"DB_PORT" default:"5432"`
+	User     string `env:"DB_USER" default:"postgres"`
+	Password string `env:"DB_PASSWORD" secret:"true"`
+	Name     string `env:"DB_NAME" required:"true"`
+	SSLMode  string `env:"DB_SSLMODE" default:"disable"`
+	TimeZone string `env:"DB_TIMEZONE" default:"Asia/Jakarta"`
 	
-	MaxOpenConns    int           `env:"MAX_OPEN_CONNS" default:"25"`
-	MaxIdleConns    int           `env:"MAX_IDLE_CONNS" default:"5"`
-	ConnMaxLifetime time.Duration `env:"CONN_MAX_LIFETIME" default:"1h"`
+	MaxOpenConns    int           `env:"DB_MAX_OPEN_CONNS" default:"25"`
+	MaxIdleConns    int           `env:"DB_MAX_IDLE_CONNS" default:"5"`
+	ConnMaxLifetime time.Duration `env:"DB_CONN_MAX_LIFETIME" default:"1h"`
 }
 
 func (d DB) DSN() string {
