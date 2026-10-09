@@ -2,21 +2,20 @@ package response
 
 import (
 	"errors"
-	"fmt"
-	"log/slog"
-	
+
 	"github.com/gofiber/fiber/v2"
-	
+
 	"github.com/enim-net/enim-core/dictionary"
 	"github.com/enim-net/enim-core/errs"
+	"github.com/enim-net/enim-core/logger"
 )
 
 func Locale(c *fiber.Ctx) dictionary.Locale {
 	if v, ok := c.Locals("locale").(dictionary.Locale); ok && dictionary.Has(v) {
 		return v
 	}
-	if lang := dictionary.Locale(c.Get("Accept-Language")); dictionary.Has(lang) {
-		return lang
+	if l, ok := dictionary.Match(c.Get(fiber.HeaderAcceptLanguage)); ok {
+		return l
 	}
 	return dictionary.DefaultLocale
 }
@@ -48,15 +47,12 @@ func OK(c *fiber.Ctx, s Schema, data any) error {
 		code = errs.CategoryGeneral.Code
 	}
 	convMsg := Msg(c, s.Message, nil)
-	
-	fmt.Println(convMsg)
-	
 	if len(convMsg) > 0 {
 		msg = convMsg
 	} else {
 		msg = s.Message
 	}
-	
+
 	return JSON(c, fiber.StatusOK, Envelope{
 		Schema: Schema{
 			Errors:  s.Errors,
@@ -87,13 +83,15 @@ func List(c *fiber.Ctx, data any, pagination any, message string, params ...dict
 	})
 }
 
+// ErrorHandler is a fiber.Config.ErrorHandler. It renders *APIError,
+// *fiber.Error and *errs.Error; any other error becomes errs.ErrInternal.
+// Causes are logged, never sent to the client.
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	if apiErr, ok := errors.AsType[*APIError](err); ok {
 		var errBody any
 		if apiErr.Fields != nil {
 			errBody = apiErr.Fields
 		}
-		
 		return JSON(c, apiErr.Status, Envelope{
 			Schema: Schema{
 				Code:    apiErr.Code,
@@ -103,7 +101,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 			Data: nil,
 		})
 	}
-	
+
 	if fe, ok := errors.AsType[*fiber.Error](err); ok {
 		return JSON(c, fe.Code, Envelope{
 			Schema: Schema{
@@ -113,13 +111,30 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 			Data: nil,
 		})
 	}
-	
-	slog.Error("unhandled error", "error", err, "path", c.Path())
-	return JSON(c, fiber.StatusInternalServerError, Envelope{
-		Schema: Schema{
-			Message: err.Error(),
-			Code:    errs.CategoryUnhandled.Code,
-		},
+
+	e := errs.From(err)
+	status := e.HTTPStatus()
+	fields := []logger.Field{
+		logger.String("code", e.Code.String()),
+		logger.String("method", c.Method()),
+		logger.String("path", c.Path()),
+		logger.Int("status", status),
+		logger.Err(err),
+	}
+	if status >= fiber.StatusInternalServerError {
+		logger.Error(c.UserContext(), "request failed", fields...)
+	} else {
+		logger.Warn(c.UserContext(), "request rejected", fields...)
+	}
+
+	body := e.Response(Locale(c))
+	var fieldErrs any
+	if len(body.Errors) > 0 {
+		fieldErrs = body.Errors
+	}
+	return JSON(c, status, Envelope{
+		Schema: Schema{Code: body.Code, Message: body.Message, Errors: fieldErrs},
+		Data:   nil,
 	})
 }
 

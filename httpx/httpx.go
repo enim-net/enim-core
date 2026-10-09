@@ -6,6 +6,8 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/enim-net/enim-core/errs"
 )
 
 type Pagination struct {
@@ -44,7 +46,10 @@ func ParsePagination(c *fiber.Ctx) Pagination {
 }
 
 func NewPageMeta(p Pagination, total int64) PageMeta {
-	maxPage := int((total + int64(p.Limit) - 1) / int64(p.Limit))
+	maxPage := 0
+	if p.Limit > 0 {
+		maxPage = int((total + int64(p.Limit) - 1) / int64(p.Limit))
+	}
 
 	return PageMeta{
 		Page:    p.Page,
@@ -54,19 +59,23 @@ func NewPageMeta(p Pagination, total int64) PageMeta {
 	}
 }
 
+// BodyParser strictly decodes a JSON body into dst: the body must be
+// non-empty, contain exactly one JSON value and no unknown fields. Failures
+// are *errs.Error with code ErrMalformedBody (HTTP 400); the decoder error is
+// kept as the cause for logs.
 func BodyParser(c *fiber.Ctx, dst interface{}) error {
 	body := c.Body()
 	if len(body) == 0 {
-		return errors.New("empty request body")
+		return errs.Wrap(errors.New("empty request body"), errs.ErrMalformedBody, nil)
 	}
 
 	dec := json.NewDecoder(bytes.NewReader(body))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(dst); err != nil {
-		return err
+		return errs.Wrap(err, errs.ErrMalformedBody, nil)
 	}
 	if dec.More() {
-		return errors.New("request body must contain a single JSON object")
+		return errs.Wrap(errors.New("request body must contain a single JSON object"), errs.ErrMalformedBody, nil)
 	}
 	return nil
 }

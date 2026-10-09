@@ -14,9 +14,12 @@ konstanta — supaya setiap service tidak menulis ulang hal yang sama.
 |---|---|---|
 | [`logger`](./logger) | Tersedia | Structured logger berbasis adapter, field dari `context`, logger default global |
 | [`logger/sentry`](./logger/sentry) | Tersedia | Adapter untuk mengirim log ke Sentry |
-| `error` | Rencana | Tipe error standar antar service |
-| `responses` | Rencana | Format response HTTP standar |
-| `constants` | Rencana | Konstanta bersama |
+| [`config`](./config) | Tersedia | Load env/`.env` ke struct (`env`, `default`, `required`, `secret`, `prefix`), section `App`, `DB`, `JWT` |
+| [`errs`](./errs) | Tersedia | Error dengan kode stabil `PREFIX-CC-NNN`, kategori → HTTP status, pesan terlokalisasi |
+| [`response`](./response) | Tersedia | Envelope response Fiber (`OK`, `Created`, `List`) dan `ErrorHandler` |
+| [`httpx`](./httpx) | Tersedia | Pagination, `BodyParser` ketat, validasi (`Validate`, `ValidateErr`) |
+| [`dictionary`](./dictionary) | Tersedia | Pesan i18n (`en_US`, `id_ID`), `T`, `Match(Accept-Language)` |
+| [`jwt`](./jwt) | Tersedia | HS256 access/refresh token |
 
 ## Instalasi
 

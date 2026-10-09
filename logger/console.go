@@ -25,10 +25,10 @@ func NewConsole(opts ConsoleOptions) Adapter {
 	if w == nil {
 		w = os.Stdout
 	}
-	
+
 	ho := &slog.HandlerOptions{Level: slog.LevelDebug}
 	var h slog.Handler
-	
+
 	if opts.Format == FormatJSON {
 		h = slog.NewJSONHandler(w, ho)
 	} else {
@@ -50,11 +50,11 @@ func (c *consoleAdapter) Write(ctx context.Context, e Entry) error {
 	if e.Error != nil {
 		r.AddAttrs(slog.String(ErrorKey, e.Error.Error()))
 	}
-	
+
 	if e.Caller != "" {
-		r.AddAttrs(slog.String(ErrorKey, e.Error.Error()))
+		r.AddAttrs(slog.String("caller", e.Caller))
 	}
-	
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	return c.h.Handle(ctx, r)

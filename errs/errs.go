@@ -1,8 +1,12 @@
-package errs // Package errs provides application errors with standard codes in the form
+// Package errs provides application errors with stable codes in the form
+// PREFIX-CC-NNN (e.g. ISP-04-101), categories mapped to HTTP statuses,
+// localized messages and hidden causes for logging.
+package errs
+
 import (
 	"errors"
 	"fmt"
-	
+
 	"github.com/enim-net/enim-core/dictionary"
 )
 
