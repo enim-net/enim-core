@@ -5,16 +5,16 @@ package errs
 // apps can override any of them in their own locale files.
 var (
 	// 00 general
-	OK       = defineCore(CategoryGeneral, 99, "general.success")
-	OKList   = defineCore(CategoryGeneral, 99, "general.list.success")
-	Created  = defineCore(CategoryGeneral, 99, "general.create.success")
-	Amend    = defineCore(CategoryGeneral, 0, "general.update.success")
-	Patching = defineCore(CategoryGeneral, 0, "general.update.success")
-	
+	OK       = defineCore(CategoryGeneral, 0, "general.success")
+	OKList   = defineCore(CategoryGeneral, 1, "general.list.success")
+	Created  = defineCore(CategoryGeneral, 2, "general.create.success")
+	Amend    = defineCore(CategoryGeneral, 3, "general.update.success")
+	Patching = defineCore(CategoryGeneral, 4, "general.update.success")
+
 	// event
-	
-	ErrInternal = defineCore(CategoryGeneral, 0, "error.internal")
-	
+
+	ErrInternal = defineCore(CategoryGeneral, 98, "error.internal")
+
 	// 01 validation
 	ErrValidation    = defineCore(CategoryValidation, 0, "error.validation.failed")
 	ErrRequired      = defineCore(CategoryValidation, 1, "error.validation.required")
@@ -26,33 +26,33 @@ var (
 	ErrOutOfRange    = defineCore(CategoryValidation, 7, "error.validation.out_of_range")
 	ErrInvalidOption = defineCore(CategoryValidation, 8, "error.validation.invalid_option")
 	ErrMalformedBody = defineCore(CategoryValidation, 9, "error.validation.malformed_body")
-	
+
 	// 02 authentication
 	ErrUnauthenticated    = defineCore(CategoryAuth, 0, "error.auth.unauthenticated")
 	ErrTokenExpired       = defineCore(CategoryAuth, 1, "error.auth.token_expired")
 	ErrTokenInvalid       = defineCore(CategoryAuth, 2, "error.auth.token_invalid")
 	ErrInvalidCredentials = defineCore(CategoryAuth, 3, "error.auth.invalid_credentials")
-	
+
 	// 03 authorization
 	ErrForbidden = defineCore(CategoryForbidden, 0, "error.forbidden")
-	
+
 	// 04 not found
 	ErrNotFound = defineCore(CategoryNotFound, 0, "error.not_found")
-	
+
 	// 05 conflict
 	ErrConflict  = defineCore(CategoryConflict, 0, "error.conflict")
 	ErrDuplicate = defineCore(CategoryConflict, 1, "error.duplicate")
-	
+
 	// 06 business rule
 	ErrBusinessRule = defineCore(CategoryBusiness, 0, "error.business_rule")
-	
+
 	// 07 database
 	ErrDatabase = defineCore(CategoryDatabase, 0, "error.database")
-	
+
 	// 08 external service
 	ErrExternalService = defineCore(CategoryExternal, 0, "error.external.failed")
 	ErrExternalTimeout = defineCore(CategoryExternal, 1, "error.external.timeout")
-	
+
 	// 09 rate limit
 	ErrTooManyRequests = defineCore(CategoryRateLimit, 0, "error.too_many_requests")
 )
