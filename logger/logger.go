@@ -37,21 +37,21 @@ type core struct {
 
 func New(opts Options, adapters ...Adapter) *Logger {
 	base := make([]Field, 0, len(opts.Fields)+2)
-	
+
 	if opts.Service != "" {
 		base = append(base, String("service", opts.Service))
 	}
-	
+
 	if opts.Env != "" {
 		base = append(base, String("env", opts.Env))
 	}
 	base = append(base, opts.Fields...)
-	
+
 	onError := opts.OnAdapterError
 	if onError == nil {
 		onError = func(err error) { fmt.Fprintln(os.Stderr, "logger: ", err) }
 	}
-	
+
 	return &Logger{core: &core{
 		level:     opts.Level,
 		adapters:  adapters,
@@ -67,16 +67,24 @@ func (l *Logger) With(fields ...Field) *Logger {
 	merged := make([]Field, 0, len(l.fields)+len(fields))
 	merged = append(merged, l.fields...)
 	merged = append(merged, fields...)
-	
+
 	return &Logger{core: l.core, fields: merged}
 }
 
 // Enabled reports whether entries at level would be logged.
-func (l *Logger) Enabled(level Level) bool                               { return level >= l.core.level }
-func (l *Logger) Debug(ctx context.Context, msg string, fields ...Field) {}
-func (l *Logger) Info(ctx context.Context, msg string, fields ...Field)  {}
-func (l *Logger) Warn(ctx context.Context, msg string, fields ...Field)  {}
-func (l *Logger) Error(ctx context.Context, msg string, fields ...Field) {}
+func (l *Logger) Enabled(level Level) bool { return level >= l.core.level }
+func (l *Logger) Debug(ctx context.Context, msg string, fields ...Field) {
+	l.log(ctx, LevelDebug, msg, fields)
+}
+func (l *Logger) Info(ctx context.Context, msg string, fields ...Field) {
+	l.log(ctx, LevelInfo, msg, fields)
+}
+func (l *Logger) Warn(ctx context.Context, msg string, fields ...Field) {
+	l.log(ctx, LevelWarn, msg, fields)
+}
+func (l *Logger) Error(ctx context.Context, msg string, fields ...Field) {
+	l.log(ctx, LevelError, msg, fields)
+}
 
 func (l *Logger) Close(ctx context.Context) error {
 	c := l.core
@@ -89,11 +97,13 @@ func (l *Logger) Close(ctx context.Context) error {
 		}
 		c.closeErr = errors.Join(errs...)
 	})
-	
+
 	return c.closeErr
 }
 
-const callerSkip = 3
+// callerSkip is the number of frames between runtime.Caller inside log and
+// the user's call site: log <- (Logger method | package function) <- caller.
+const callerSkip = 2
 
 func (l *Logger) log(ctx context.Context, level Level, msg string, fields []Field) {
 	c := l.core
@@ -103,14 +113,14 @@ func (l *Logger) log(ctx context.Context, level Level, msg string, fields []Fiel
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	
+
 	ctxFields := FieldsFromContext(ctx)
 	all := make([]Field, 0, len(c.base)+len(l.fields)+len(ctxFields)+len(fields))
 	all = append(all, c.base...)
 	all = append(all, l.fields...)
 	all = append(all, ctxFields...)
 	all = append(all, fields...)
-	
+
 	e := Entry{Time: time.Now(), Level: level, Message: msg}
 	e.Fields = make([]Field, 0, len(all))
 	for _, f := range all {
@@ -126,13 +136,18 @@ func (l *Logger) log(ctx context.Context, level Level, msg string, fields []Fiel
 		}
 		e.Fields = append(e.Fields, f)
 	}
-	
+
 	if c.addCaller {
-		if _, file, line, ok := runtime.Caller(callerSkip - 1); ok {
-			e.Caller = fmt.Sprintf("%s: %d", shortPath(file), line)
+		if _, file, line, ok := runtime.Caller(callerSkip); ok {
+			e.Caller = fmt.Sprintf("%s:%d", shortPath(file), line)
 		}
 	}
-	
+
+	for _, a := range c.adapters {
+		if err := a.Write(ctx, e); err != nil {
+			c.onError(err)
+		}
+	}
 }
 
 func shortPath(p string) string {

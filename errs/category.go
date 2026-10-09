@@ -9,7 +9,9 @@ type Category struct {
 }
 
 var (
-	CategoryGeneral    = Category{"00", "general", http.StatusOK}
+	// CategoryGeneral is "00": the success code in response envelopes and, as an
+	// error category, an internal error (HTTP 500).
+	CategoryGeneral    = Category{"00", "general", http.StatusInternalServerError}
 	CategoryValidation = Category{"01", "validation", http.StatusBadRequest}
 	CategoryAuth       = Category{"02", "authentication", http.StatusUnauthorized}
 	CategoryForbidden  = Category{"03", "authorization", http.StatusForbidden}

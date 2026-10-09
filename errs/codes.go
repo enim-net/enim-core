@@ -5,6 +5,14 @@ package errs
 // apps can override any of them in their own locale files.
 var (
 	// 00 general
+	OK       = defineCore(CategoryGeneral, 99, "general.success")
+	OKList   = defineCore(CategoryGeneral, 99, "general.list.success")
+	Created  = defineCore(CategoryGeneral, 99, "general.create.success")
+	Amend    = defineCore(CategoryGeneral, 0, "general.update.success")
+	Patching = defineCore(CategoryGeneral, 0, "general.update.success")
+	
+	// event
+	
 	ErrInternal = defineCore(CategoryGeneral, 0, "error.internal")
 	
 	// 01 validation
@@ -19,11 +27,11 @@ var (
 	ErrInvalidOption = defineCore(CategoryValidation, 8, "error.validation.invalid_option")
 	ErrMalformedBody = defineCore(CategoryValidation, 9, "error.validation.malformed_body")
 	
-	// 02 authentiCategoryion
-	ErrUnauthentiCategoryed = defineCore(CategoryAuth, 0, "error.auth.unauthentiCategoryed")
-	ErrTokenExpired         = defineCore(CategoryAuth, 1, "error.auth.token_expired")
-	ErrTokenInvalid         = defineCore(CategoryAuth, 2, "error.auth.token_invalid")
-	ErrInvalidCredentials   = defineCore(CategoryAuth, 3, "error.auth.invalid_credentials")
+	// 02 authentication
+	ErrUnauthenticated    = defineCore(CategoryAuth, 0, "error.auth.unauthenticated")
+	ErrTokenExpired       = defineCore(CategoryAuth, 1, "error.auth.token_expired")
+	ErrTokenInvalid       = defineCore(CategoryAuth, 2, "error.auth.token_invalid")
+	ErrInvalidCredentials = defineCore(CategoryAuth, 3, "error.auth.invalid_credentials")
 	
 	// 03 authorization
 	ErrForbidden = defineCore(CategoryForbidden, 0, "error.forbidden")
@@ -32,8 +40,8 @@ var (
 	ErrNotFound = defineCore(CategoryNotFound, 0, "error.not_found")
 	
 	// 05 conflict
-	ErrConflict          = defineCore(CategoryConflict, 0, "error.conflict")
-	ErrDuplicateCategory = defineCore(CategoryConflict, 1, "error.dupliCategorye")
+	ErrConflict  = defineCore(CategoryConflict, 0, "error.conflict")
+	ErrDuplicate = defineCore(CategoryConflict, 1, "error.duplicate")
 	
 	// 06 business rule
 	ErrBusinessRule = defineCore(CategoryBusiness, 0, "error.business_rule")
@@ -47,4 +55,13 @@ var (
 	
 	// 09 rate limit
 	ErrTooManyRequests = defineCore(CategoryRateLimit, 0, "error.too_many_requests")
+)
+
+// Deprecated aliases for names damaged by an earlier search/replace.
+// They are the same codes; remove in a future minor release.
+var (
+	// Deprecated: use ErrUnauthenticated.
+	ErrUnauthentiCategoryed = ErrUnauthenticated
+	// Deprecated: use ErrDuplicate.
+	ErrDuplicateCategory = ErrDuplicate
 )

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	
+
 	"github.com/enim-net/enim-core/utils"
 )
 
@@ -38,12 +38,12 @@ func Load(dst any, opts ...Option) error {
 			return fmt.Errorf("config: %w", err)
 		}
 	}
-	
+
 	rv := reflect.ValueOf(dst)
 	if rv.Kind() != reflect.Pointer || rv.Elem().Kind() != reflect.Struct {
 		return errors.New("config: Load needs a pointer to a struct")
 	}
-	
+
 	var errs []error
 	fill(rv.Elem(), "", &errs)
 	validate(rv.Elem(), &errs)
@@ -68,8 +68,8 @@ func fill(v reflect.Value, prefix string, errs *[]error) {
 		if !f.IsExported() {
 			continue
 		}
-		
-		fv := v.Field(1)
+
+		fv := v.Field(i)
 		key, hasEnv := f.Tag.Lookup("env")
 		if !hasEnv {
 			if fv.Kind() == reflect.Struct {
@@ -80,7 +80,7 @@ func fill(v reflect.Value, prefix string, errs *[]error) {
 		key = prefix + key
 		raw, ok := os.LookupEnv(key)
 		raw = strings.TrimSpace(raw)
-		
+
 		switch {
 		case ok && raw != "":
 		// environment wins
@@ -94,7 +94,7 @@ func fill(v reflect.Value, prefix string, errs *[]error) {
 			}
 			continue
 		}
-		
+
 		if err := set(fv, raw); err != nil {
 			*errs = append(*errs, fmt.Errorf("%s: %v", key, err))
 		}

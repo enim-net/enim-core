@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"time"
-	
+
 	sentrygo "github.com/getsentry/sentry-go"
-	
+
 	"github.com/enim-net/enim-core/logger"
 )
 
@@ -36,10 +36,7 @@ func New(cfg Config) (*Adapter, error) {
 	if cfg.FlushTimeout <= 0 {
 		cfg.FlushTimeout = 3 * time.Second
 	}
-	if cfg.MinLevel == logger.LevelDebug {
-		cfg.MinLevel = logger.LevelDebug
-	}
-	
+
 	client, err := sentrygo.NewClient(sentrygo.ClientOptions{
 		Dsn:              cfg.DSN,
 		Environment:      cfg.Environment,
@@ -48,7 +45,7 @@ func New(cfg Config) (*Adapter, error) {
 		AttachStacktrace: true,
 		Debug:            cfg.Debug,
 	})
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +60,10 @@ func (a *Adapter) Write(_ context.Context, e logger.Entry) error {
 	if e.Level < a.min {
 		return nil
 	}
-	
+
 	a.hub.WithScope(func(scope *sentrygo.Scope) {
 		scope.SetLevel(toSentryLevel(e.Level))
-		
+
 		fields := sentrygo.Context{}
 		for _, f := range e.Fields {
 			fields[f.Key] = f.Value
@@ -77,7 +74,7 @@ func (a *Adapter) Write(_ context.Context, e logger.Entry) error {
 		if e.Caller != "" {
 			scope.SetTag("caller", e.Caller)
 		}
-		
+
 		if e.Error != nil {
 			// Keep the log message visible next to the exception.
 			scope.SetContext("log", sentrygo.Context{"message": e.Message})

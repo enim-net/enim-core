@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"path"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -18,7 +19,7 @@ const (
 	LocaleDE Locale = "de_DE"
 	LocaleFR Locale = "fr_FR"
 	LocaleJA Locale = "ja_JP"
-	
+
 	DefaultLocale = LocaleEN
 )
 
@@ -60,7 +61,7 @@ func (d *Dictionary) Load(fsys fs.FS, dir string) error {
 	if err != nil {
 		return fmt.Errorf("dictionary: glob %s: %w", dir, err)
 	}
-	
+
 	if len(files) == 0 {
 		return fmt.Errorf("dictionary: no *.json files in %q", dir)
 	}
@@ -73,7 +74,7 @@ func (d *Dictionary) Load(fsys fs.FS, dir string) error {
 		if err := json.Unmarshal(raw, &tree); err != nil {
 			return fmt.Errorf("dictionary: parse %s: %w", file, err)
 		}
-		
+
 		table := map[string]string{}
 		if err := flatten("", tree, table); err != nil {
 			return fmt.Errorf("dictionary: %s: %w", file, err)
@@ -105,7 +106,7 @@ func (d *Dictionary) Add(locale Locale, msgs map[string]string) {
 func (d *Dictionary) Has(locale Locale) bool {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	
+
 	_, ok := d.messages[locale]
 	return ok
 }
@@ -130,27 +131,57 @@ func (d *Dictionary) T(locale Locale, key string, params Params) string {
 	if !ok {
 		return key
 	}
-	
+
 	if len(params) == 0 {
 		return text
 	}
-	
+
 	return placeholders.ReplaceAllStringFunc(text, func(token string) string {
 		name := placeholders.FindStringSubmatch(token)[1]
 		if v, ok := params[name]; ok {
 			return fmt.Sprint(v)
 		}
-		
+
 		return token
 	})
 }
 
+// languageFromFile maps a file name to its locale: "id_ID.json" -> "id_ID".
 func languageFromFile(name string) Locale {
-	stem := strings.TrimSuffix(name, path.Ext(name))
-	if i := strings.IndexAny(stem, "_"); i > 0 {
-		stem = stem[:i]
+	return Locale(strings.TrimSuffix(name, path.Ext(name)))
+}
+
+// Match picks the best loaded locale for an Accept-Language header such as
+// "id-ID,id;q=0.9,en;q=0.8". Tags are tried in order (q-values are assumed
+// to be descending, as browsers send them); "id-ID" matches "id_ID", and a
+// bare language ("id") matches the first loaded locale with that language.
+func (d *Dictionary) Match(acceptLanguage string) (Locale, bool) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	for part := range strings.SplitSeq(acceptLanguage, ",") {
+		tag, _, _ := strings.Cut(strings.TrimSpace(part), ";")
+		tag = strings.ReplaceAll(strings.TrimSpace(tag), "-", "_")
+		if tag == "" || tag == "*" {
+			continue
+		}
+		for l := range d.messages {
+			if strings.EqualFold(string(l), tag) {
+				return l, true
+			}
+		}
+		lang, _, _ := strings.Cut(tag, "_")
+		var candidates []Locale
+		for l := range d.messages {
+			if ll, _, _ := strings.Cut(string(l), "_"); strings.EqualFold(ll, lang) {
+				candidates = append(candidates, l)
+			}
+		}
+		if len(candidates) > 0 {
+			slices.Sort(candidates) // deterministic
+			return candidates[0], true
+		}
 	}
-	return Locale(strings.ToLower(stem))
+	return "", false
 }
 
 func flatten(prefix string, in map[string]any, out map[string]string) error {
@@ -170,6 +201,6 @@ func flatten(prefix string, in map[string]any, out map[string]string) error {
 			return fmt.Errorf("key %q: value must be a string or object, got %T", key, v)
 		}
 	}
-	
+
 	return nil
 }

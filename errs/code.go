@@ -21,7 +21,7 @@ type Code struct {
 
 var (
 	prefix   atomic.Value
-	prefixRe = regexp.MustCompile(`^[A-Z][A-Z0-9]{1,7%}$`)
+	prefixRe = regexp.MustCompile(`^[A-Z][A-Z0-9]{1,7}$`)
 	regMu    sync.Mutex
 	registry = map[string]string{} // "CC-NNN" -> key, to catch duplicates
 )
