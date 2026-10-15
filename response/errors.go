@@ -26,3 +26,8 @@ func (e *APIError) WithFields(fields map[string]string) *APIError {
 	e.Fields = fields
 	return e
 }
+
+func (e *APIError) WithParams(params dictionary.Params) *APIError {
+	e.Params = params
+	return e
+}
