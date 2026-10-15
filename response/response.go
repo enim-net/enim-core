@@ -63,6 +63,81 @@ func OK(c *fiber.Ctx, s Schema, data any) error {
 		Data: data,
 	})
 }
+
+func Unauthorized(c *fiber.Ctx, message string, s *Schema) error {
+	return JSON(c, fiber.StatusBadRequest, Envelope{
+		Schema: Schema{
+			Message: Msg(c, message, nil),
+			Code:    errs.CategoryNotFound.Code,
+			Errors:  s.Errors,
+		},
+	})
+}
+
+func BadRequest(c *fiber.Ctx, message string, s *Schema) error {
+	return JSON(c, fiber.StatusBadRequest, Envelope{
+		Schema: Schema{
+			Message: Msg(c, message, nil),
+			Code:    errs.CategoryNotFound.Code,
+			Errors:  s.Errors,
+		},
+	})
+}
+func NotFound(c *fiber.Ctx, message string) error {
+	return JSON(c, fiber.StatusNotFound, Envelope{
+		Schema: Schema{
+			Message: Msg(c, message, nil),
+			Code:    errs.CategoryNotFound.Code,
+		},
+	})
+}
+
+func Forbidden(c *fiber.Ctx, message string, s *Schema, d *any) error {
+	code := errs.ErrForbidden.Error()
+	var err2 any
+
+	if s != nil {
+		if s.Code != "" {
+			code = s.Code
+		}
+		if s.Errors != nil {
+			err2 = s.Errors
+		}
+	}
+
+	return JSON(c, fiber.StatusForbidden, Envelope{
+		Schema: Schema{
+			Message: Msg(c, message, nil),
+			Code:    code,
+			Errors:  err2,
+		},
+		Data: d,
+	})
+}
+
+func Conflict(c *fiber.Ctx, message string, s *Schema, d *any) error {
+	code := errs.CategoryConflict.Code
+	var err2 any
+
+	if s != nil {
+		if s.Code != "" {
+			code = s.Code
+		}
+		if s.Errors != nil {
+			err2 = s.Errors
+		}
+	}
+
+	return JSON(c, fiber.StatusConflict, Envelope{
+		Schema: Schema{
+			Message: Msg(c, message, nil),
+			Code:    code,
+			Errors:  err2,
+		},
+		Data: d,
+	})
+}
+
 func Created(c *fiber.Ctx, data any, message string, params ...dictionary.Params) error {
 	return JSON(c, fiber.StatusCreated, Envelope{
 		Schema: Schema{
