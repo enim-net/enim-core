@@ -65,6 +65,7 @@ func NewPageMeta(p Pagination, total int64) PageMeta {
 // kept as the cause for logs.
 func BodyParser(c *fiber.Ctx, dst interface{}) error {
 	body := c.Body()
+
 	if len(body) == 0 {
 		return errs.Wrap(errors.New("empty request body"), errs.ErrMalformedBody, nil)
 	}

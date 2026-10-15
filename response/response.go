@@ -2,6 +2,7 @@ package response
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -75,7 +76,7 @@ func Created(c *fiber.Ctx, data any, message string, params ...dictionary.Params
 func List(c *fiber.Ctx, data any, pagination any, message string, params ...dictionary.Params) error {
 	return JSON(c, fiber.StatusOK, Envelope{
 		Schema: Schema{
-			Code:    errs.CategoryGeneral.Code,
+			Code:    errs.OKList.Error(),
 			Message: Msg(c, message, firstParams(params)),
 		},
 		Data:       data,
@@ -88,6 +89,7 @@ func List(c *fiber.Ctx, data any, pagination any, message string, params ...dict
 // Causes are logged, never sent to the client.
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	if apiErr, ok := errors.AsType[*APIError](err); ok {
+		fmt.Println(ok, apiErr)
 		var errBody any
 		if apiErr.Fields != nil {
 			errBody = apiErr.Fields
@@ -107,6 +109,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 			Schema: Schema{
 				Message: fe.Message,
 				Code:    errs.CategoryGeneral.Code,
+				Errors:  nil,
 			},
 			Data: nil,
 		})
