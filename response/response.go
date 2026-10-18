@@ -77,7 +77,7 @@ func BadRequest(c *fiber.Ctx, message string, s Schema) error {
 	return JSON(c, fiber.StatusBadRequest, Envelope{
 		Schema: Schema{
 			Message: Msg(c, message, nil),
-			Code:    errs.CategoryNotFound.Code,
+			Code:    errs.ErrValidation.Key(),
 			Errors:  s.Errors,
 		},
 	})
@@ -115,7 +115,7 @@ func Forbidden(c *fiber.Ctx, message string, s *Schema, d *any) error {
 }
 
 func Conflict(c *fiber.Ctx, message string, s *Schema, d *any) error {
-	code := errs.CategoryConflict.Code
+	code := errs.ErrConflict.Error()
 	var err2 any
 
 	if s != nil {
@@ -141,7 +141,7 @@ func Created(c *fiber.Ctx, data any, message string, params ...dictionary.Params
 	return JSON(c, fiber.StatusCreated, Envelope{
 		Schema: Schema{
 			Message: Msg(c, message, firstParams(params)),
-			Code:    errs.CategoryGeneral.Code,
+			Code:    errs.Created.ID(),
 		},
 		Data: data,
 	})
@@ -150,7 +150,7 @@ func Created(c *fiber.Ctx, data any, message string, params ...dictionary.Params
 func List(c *fiber.Ctx, data any, pagination any, message string, params ...dictionary.Params) error {
 	return JSON(c, fiber.StatusOK, Envelope{
 		Schema: Schema{
-			Code:    errs.OKList.Error(),
+			Code:    errs.OKList.ID(),
 			Message: Msg(c, message, firstParams(params)),
 		},
 		Data:       data,
