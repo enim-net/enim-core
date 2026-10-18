@@ -2,7 +2,6 @@ package response
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -74,7 +73,7 @@ func Unauthorized(c *fiber.Ctx, message string, s *Schema) error {
 	})
 }
 
-func BadRequest(c *fiber.Ctx, message string, s *Schema) error {
+func BadRequest(c *fiber.Ctx, message string, s Schema) error {
 	return JSON(c, fiber.StatusBadRequest, Envelope{
 		Schema: Schema{
 			Message: Msg(c, message, nil),
@@ -87,7 +86,7 @@ func NotFound(c *fiber.Ctx, message string) error {
 	return JSON(c, fiber.StatusNotFound, Envelope{
 		Schema: Schema{
 			Message: Msg(c, message, nil),
-			Code:    errs.CategoryNotFound.Code,
+			Code:    errs.ErrNotFound.Error(),
 		},
 	})
 }
@@ -164,7 +163,6 @@ func List(c *fiber.Ctx, data any, pagination any, message string, params ...dict
 // Causes are logged, never sent to the client.
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	if apiErr, ok := errors.AsType[*APIError](err); ok {
-		fmt.Println(ok, apiErr)
 		var errBody any
 		if apiErr.Fields != nil {
 			errBody = apiErr.Fields
