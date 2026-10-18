@@ -16,7 +16,7 @@ var (
 	ErrInternal = defineCore(CategoryGeneral, 98, "error.internal")
 
 	// 01 validation
-	ErrBadRequest    = defineCore(CategoryValidation, 0, "error.validation.failed")
+	ErrBadRequest    = defineCore(CategoryValidation, 10, "error.validation.failed")
 	ErrValidation    = defineCore(CategoryValidation, 0, "error.validation.failed")
 	ErrRequired      = defineCore(CategoryValidation, 1, "error.validation.required")
 	ErrInvalidFormat = defineCore(CategoryValidation, 2, "error.validation.invalid_format")
